@@ -4,8 +4,8 @@
 
     export let data: {
         history: Array<{
-            sourceAddress: string;
-            destinationAddress: string;
+            source: string;
+            destination: string;
             kilometers: number;
             miles: number;
             timestamp: string;
@@ -31,7 +31,7 @@
     }
 </script>
 
-<div class="max-w-7xl mx-auto p-6">
+<div class=" mx-auto p-6 ">
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-semibold">Distance Calculator</h1>
         <button
@@ -104,10 +104,10 @@
                     {#each history as record}
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {record.sourceAddress}
+                                {record.source}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {record.destinationAddress}
+                                {record.destination}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {record.miles.toFixed(2)}

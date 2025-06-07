@@ -4,14 +4,15 @@ interface DistanceResponse {
 }
 
 interface HistoryRecord {
-    sourceAddress: string;
-    destinationAddress: string;
+    source: string;
+    destination: string;
     kilometers: number;
     miles: number;
     timestamp: string;
 }
 
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 export async function fetchDistance(source: string, destination: string): Promise<DistanceResponse> {
     const response = await fetch(`${API_BASE_URL}/distance`, {
