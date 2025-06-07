@@ -4,18 +4,14 @@
   import type { HistoryRecord } from "$lib/api/client";
   import type { PageData } from "./$types";
 
-  export let data: { history: HistoryRecord[] | null; error?: string };
-  const history = data.history;
+  export let data: PageData;
+  const history: HistoryRecord[] = data.history;
 </script>
 
-<div class="mx-auto">
+<div class="mx-auto p-4">
   <div class="flex justify-between items-start mb-8">
     <div>
       <PageTitle />
-      <div class="mt-8">
-        <h2 class="text-xl font-medium mb-2">Historical Queries</h2>
-        <p class="text-gray-600">History of the user's queries.</p>
-      </div>
     </div>
     <button
       on:click={() => goto("/")}
@@ -38,63 +34,67 @@
     </button>
   </div>
 
-  <div class="bg-white shadow overflow-hidden rounded-lg">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Source Address
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Destination Address
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Distance in Miles
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Distance in Kilometers
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          {#if history === null}
-            <!-- show spinner -->
-            <tr><td colspan="4" class="px-6 py-4 text-center">Loading…</td></tr>
-          {:else if history.length === 0}
-            <tr
-              ><td colspan="4" class="px-6 py-4 text-center"
-                >No historical queries found.</td
-              ></tr
-            >
-          {:else}
-            {#each history as record}
+  <div class="bg-white py-8 px-4">
+    <div class="mb-8 ml-4">
+      <h2 class="text-xl font-light mb-2">Historical Queries</h2>
+      <p class=" text-base text-gray-600">History of the user's queries.</p>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Source Address
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Destination Address
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Distance in Miles
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Distance in Kilometers
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {#if history.length === 0}
               <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {record.Source}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {record.destination}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {record.miles.toFixed(2)}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {record.kilometers.toFixed(2)}
+                <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                  {data.error ?? "No historical queries found."}
                 </td>
               </tr>
-            {/each}
-          {/if}
-        </tbody>
-      </table>
+            {:else}
+              {#each history as record}
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {record.source}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {record.destination}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {record.miles.toFixed(2)}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {record.kilometers.toFixed(2)}
+                  </td>
+                </tr>
+              {/each}
+            {/if}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

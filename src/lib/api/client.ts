@@ -1,5 +1,6 @@
 import { toast } from "$lib/stores/toast";
 import { browser } from "$app/environment";
+import { PUBLIC_API_BASE_URL } from '$env/static/public';
 interface ApiError {
   detail: {
     code: string;
@@ -7,7 +8,8 @@ interface ApiError {
   };
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+const API_BASE_URL = PUBLIC_API_BASE_URL;
 
 async function apiFetch<T>(
   endpoint: string,
@@ -46,7 +48,7 @@ export interface DistanceResponse {
 }
 
 export interface HistoryRecord {
-  Source: string;
+  source: string;
   destination: string;
   kilometers: number;
   miles: number;
