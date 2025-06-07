@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
-import { fetchHistory } from '$lib/api';
+import type { HistoryRecord } from '$lib/api/client';
+import { fetchHistory } from '$lib/api/client';
 
 export const load: PageLoad = async () => {
     try {
@@ -7,10 +8,10 @@ export const load: PageLoad = async () => {
         return {
             history
         };
-    } catch (error) {
+    } catch (err) {
         return {
-            history: [],
+            history: [] as HistoryRecord[],
             error: 'Failed to load history'
         };
     }
-}; 
+};
