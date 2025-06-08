@@ -8,9 +8,9 @@ services:
       dockerfile: Dockerfile
     expose:
       - "3000"
-    # 运行时不再需要 PUBLIC_* 变量
+
     env_file:
-      - .env.production  # 如果你的 SSR 代码里还用到，也可以继续读
+      - .env.production  
     restart: unless-stopped
     networks:
       - proxy-net
