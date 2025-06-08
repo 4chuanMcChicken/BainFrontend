@@ -1,5 +1,5 @@
-# Use Node.js LTS version
-FROM node:20-alpine
+# Build stage
+FROM node:20-alpine as builder
 
 # Set working directory
 WORKDIR /app
@@ -16,8 +16,17 @@ COPY . .
 # Build the app
 RUN npm run build
 
-# Expose port
-EXPOSE 3000
+# Production stage
+FROM nginx:alpine
 
-# Start the app
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"] 
+# Copy built assets from builder stage
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"] 
