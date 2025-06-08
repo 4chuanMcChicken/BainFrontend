@@ -5,6 +5,7 @@
   import { fetchDistance } from "$lib/api/client";
   import { toast } from "$lib/stores/toast";
   import PageTitle from "$lib/components/PageTitle.svelte";
+  import { googlePlacesAutocomplete } from '$lib/actions/googlePlacesAutocomplete';
 
   let sourceAddress = "";
   let destinationAddress = "";
@@ -12,8 +13,22 @@
   let result: { kilometers: number; miles: number } | null = null;
   let selectedUnit: "Miles" | "Kilometers" | "Both" = "Miles";
 
-  async function calculateDistance() {
-    if (!sourceAddress || !destinationAddress) return;
+  const handleAddressSelect = (type: 'source' | 'destination') => (place: any) => {
+    if (type === 'source') {
+      sourceAddress = place.formatted_address;
+    } else {
+      destinationAddress = place.formatted_address;
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!sourceAddress || !destinationAddress) {
+      toast.set({
+        type: "error",
+        message: "Please enter both addresses",
+      });
+      return;
+    }
 
     isLoading = true;
     try {
@@ -22,6 +37,7 @@
         type: "success",
         message: "Distance calculated successfully!",
       });
+
     } catch (error) {
       toast.set({
         type: "error",
@@ -31,7 +47,7 @@
     } finally {
       isLoading = false;
     }
-  }
+  };
 </script>
 
 <div class="mx-auto">
@@ -55,6 +71,15 @@
           type="text"
           id="source"
           bind:value={sourceAddress}
+          use:googlePlacesAutocomplete={{
+            onSelect: handleAddressSelect('source'),
+            onError: (error) => {
+              toast.set({
+                type: "error",
+                message: "Failed to load address suggestions. Please try typing the full address.",
+              });
+            }
+          }}
           class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
           focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
           transition-colors"
@@ -71,6 +96,15 @@
           type="text"
           id="destination"
           bind:value={destinationAddress}
+          use:googlePlacesAutocomplete={{
+            onSelect: handleAddressSelect('destination'),
+            onError: (error) => {
+              toast.set({
+                type: "error",
+                message: "Failed to load address suggestions. Please try typing the full address.",
+              });
+            }
+          }}
           class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
           focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
           transition-colors"
@@ -131,7 +165,7 @@
 
     <div>
       <button
-        on:click={calculateDistance}
+        on:click={handleSubmit}
         disabled={isLoading || !sourceAddress || !destinationAddress}
         class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
       >
@@ -158,7 +192,7 @@
           </svg>
           Calculating...
         {:else}
-          Calculate Distance
+          Calculate Distance <Calculator class="ml-4 h-4 w-4" />
         {/if}
       </button>
     </div>
