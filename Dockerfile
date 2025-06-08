@@ -4,28 +4,20 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 定义所有需要的构建参数
-ARG PUBLIC_API_BASE_URL
-ARG PUBLIC_GOOGLE_MAPS_API_KEY
-ARG PUBLIC_RECAPTCHA_SITE_KEY
+# 复制环境变量配置和package文件
+COPY env.config.js package*.json ./
 
-# 设置构建时的环境变量
-ENV PUBLIC_API_BASE_URL=$PUBLIC_API_BASE_URL
-ENV PUBLIC_GOOGLE_MAPS_API_KEY=$PUBLIC_GOOGLE_MAPS_API_KEY
-ENV PUBLIC_RECAPTCHA_SITE_KEY=$PUBLIC_RECAPTCHA_SITE_KEY
+# 复制构建脚本
+COPY scripts/build-env.js ./scripts/
 
-COPY .env.production .env
-
-COPY package*.json ./
+# 安装依赖
 RUN npm install
 
+# 复制源代码
 COPY . .
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-# 生成 SSR 输出到 /app/build-node
-RUN npm run build
+# 生成环境变量并构建
+RUN node scripts/build-env.js && npm run build
 
 # ---------------------
 # 2) Runtime stage
