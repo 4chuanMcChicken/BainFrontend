@@ -11,7 +11,14 @@
   let sourceAddress = "";
   let destinationAddress = "";
   let isLoading = false;
-  let result: { kilometers: number; miles: number } | null = null;
+  let result: { 
+    kilometers: number; 
+    miles: number;
+    source_address: string;
+    destination_address: string;
+    source_corrected: boolean;
+    destination_corrected: boolean;
+  } | null = null;
   let selectedUnit: "Miles" | "Kilometers" | "Both" = "Miles";
 
   const handleAddressSelect = (type: 'source' | 'destination') => (place: any) => {
@@ -26,7 +33,7 @@
     if (!sourceAddress || !destinationAddress) {
       toast.set({
         type: "error",
-        message: "Please enter both addresses",
+        message: "Please enter both addresses"
       });
       return;
     }
@@ -39,26 +46,24 @@
         onError: (error) => {
           toast.set({
             type: "error",
-            message: "reCAPTCHA verification failed. Please try again.",
+            message: "reCAPTCHA verification failed. Please try again."
           });
         }
       });
-
 
       isLoading = true;
       result = await fetchDistance(sourceAddress, destinationAddress, captchaToken);
       toast.set({
         type: "success",
-        message: "Distance calculated successfully!",
+        message: "Distance calculated successfully!"
       });
-
     } catch (error) {
       if (error instanceof Error && error.message.includes('reCAPTCHA')) {
         return;
       }
       toast.set({
         type: "error",
-        message: error instanceof Error ? error.message : "Something went wrong",
+        message: error instanceof Error ? error.message : "Something went wrong"
       });
     } finally {
       isLoading = false;
@@ -83,24 +88,31 @@
         <label for="source" class="block text-sm font-medium text-gray-700 mb-1"
           >Source Address</label
         >
-        <input
-          type="text"
-          id="source"
-          bind:value={sourceAddress}
-          use:googlePlacesAutocomplete={{
-            onSelect: handleAddressSelect('source'),
-            onError: (error) => {
-              toast.set({
-                type: "error",
-                message: "Failed to load address suggestions. Please try typing the full address.",
-              });
-            }
-          }}
-          class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
-          focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
-          transition-colors"
-          placeholder="Enter source address"
-        />
+        <div class="space-y-1">
+          <input
+            type="text"
+            id="source"
+            bind:value={sourceAddress}
+            use:googlePlacesAutocomplete={{
+              onSelect: handleAddressSelect('source'),
+              onError: (error) => {
+                toast.set({
+                  type: "error",
+                  message: "Failed to load address suggestions. Please try typing the full address."
+                });
+              }
+            }}
+            class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
+            focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
+            transition-colors"
+            placeholder="Enter source address"
+          />
+          {#if result?.source_corrected}
+            <p class="text-sm text-gray-600 italic">
+              Guess you want to search: {result.source_address}
+            </p>
+          {/if}
+        </div>
       </div>
       <div class="basis-1/3">
         <label
@@ -108,24 +120,31 @@
           class="block text-sm font-medium text-gray-700 mb-1"
           >Destination Address</label
         >
-        <input
-          type="text"
-          id="destination"
-          bind:value={destinationAddress}
-          use:googlePlacesAutocomplete={{
-            onSelect: handleAddressSelect('destination'),
-            onError: (error) => {
-              toast.set({
-                type: "error",
-                message: "Failed to load address suggestions. Please try typing the full address.",
-              });
-            }
-          }}
-          class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
-          focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
-          transition-colors"
-          placeholder="Enter destination address"
-        />
+        <div class="space-y-1">
+          <input
+            type="text"
+            id="destination"
+            bind:value={destinationAddress}
+            use:googlePlacesAutocomplete={{
+              onSelect: handleAddressSelect('destination'),
+              onError: (error) => {
+                toast.set({
+                  type: "error",
+                  message: "Failed to load address suggestions. Please try typing the full address."
+                });
+              }
+            }}
+            class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
+            focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
+            transition-colors"
+            placeholder="Enter destination address"
+          />
+          {#if result?.destination_corrected}
+            <p class="text-sm text-gray-600 italic">
+              Guess you want to search: {result.destination_address}
+            </p>
+          {/if}
+        </div>
       </div>
       <div class="basis-1/3 flex gap-4">
         <fieldset class="basis-1/4">

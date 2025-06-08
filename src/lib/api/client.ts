@@ -45,6 +45,10 @@ async function apiFetch<T>(
 export interface DistanceResponse {
   kilometers: number;
   miles: number;
+  source_address: string;
+  destination_address: string;
+  source_corrected: boolean;
+  destination_corrected: boolean;
 }
 
 export interface HistoryRecord {
