@@ -12,6 +12,7 @@ RUN npm install
 
 COPY . .
 
+# 用 adapter-node 在 /app/build-node 里输出
 RUN npm run build
 
 # ---------------------
@@ -20,12 +21,10 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
 
-# 只把打包产物拷进来
-COPY --from=builder /app/build-node ./
-
+# 把 builder 阶段 /app/build-node/ 目录下所有文件拷到当前 /app
+COPY --from=builder /app/build-node/ ./
 
 EXPOSE 3000
-
 
 CMD ["node", "index.js"]
     
