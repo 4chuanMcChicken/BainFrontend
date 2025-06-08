@@ -5,8 +5,7 @@ services:
     container_name: svelte_node
     build:
       context: .
-    env_file:
-      - .env.production
+      dockerfile: Dockerfile
     expose:
       - "3000"
     restart: unless-stopped
