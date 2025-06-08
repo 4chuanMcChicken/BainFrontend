@@ -4,6 +4,9 @@ FROM node:20-alpine as builder
 # Set working directory
 WORKDIR /app
 
+ARG PUBLIC_API_BASE_URL
+ENV PUBLIC_API_BASE_URL=$PUBLIC_API_BASE_URL
+
 # Copy package files
 COPY package*.json ./
 
