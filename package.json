@@ -12,8 +12,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.1.1",
-		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.21.2",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/google.maps": "^3.58.1",
 		"@types/node": "^20.11.0",
