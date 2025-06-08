@@ -5,14 +5,16 @@
   import { fetchDistance } from "$lib/api/client";
   import { toast } from "$lib/stores/toast";
   import PageTitle from "$lib/components/PageTitle.svelte";
-  import { googlePlacesAutocomplete } from '$lib/actions/googlePlacesAutocomplete';
-  import { showRecaptcha } from '$lib/actions/recaptcha';
+  import { googlePlacesAutocomplete } from "$lib/actions/googlePlacesAutocomplete";
+  import { showRecaptcha } from "$lib/actions/recaptcha";
+
+  const MAX_ADDRESS_LENGTH = 50;
 
   let sourceAddress = "";
   let destinationAddress = "";
   let isLoading = false;
-  let result: { 
-    kilometers: number; 
+  let result: {
+    kilometers: number;
     miles: number;
     source_address: string;
     destination_address: string;
@@ -21,19 +23,31 @@
   } | null = null;
   let selectedUnit: "Miles" | "Kilometers" | "Both" = "Miles";
 
-  const handleAddressSelect = (type: 'source' | 'destination') => (place: any) => {
-    if (type === 'source') {
-      sourceAddress = place.formatted_address;
-    } else {
-      destinationAddress = place.formatted_address;
-    }
-  };
+  const handleAddressSelect =
+    (type: "source" | "destination") => (place: any) => {
+      if (type === "source") {
+        sourceAddress = place.formatted_address.slice(0, MAX_ADDRESS_LENGTH);
+      } else {
+        destinationAddress = place.formatted_address.slice(
+          0,
+          MAX_ADDRESS_LENGTH
+        );
+      }
+    };
+
+  $: if (sourceAddress.length > MAX_ADDRESS_LENGTH) {
+    sourceAddress = sourceAddress.slice(0, MAX_ADDRESS_LENGTH);
+  }
+
+  $: if (destinationAddress.length > MAX_ADDRESS_LENGTH) {
+    destinationAddress = destinationAddress.slice(0, MAX_ADDRESS_LENGTH);
+  }
 
   const handleSubmit = async () => {
     if (!sourceAddress || !destinationAddress) {
       toast.set({
         type: "error",
-        message: "Please enter both addresses"
+        message: "Please enter both addresses",
       });
       return;
     }
@@ -46,24 +60,29 @@
         onError: (error) => {
           toast.set({
             type: "error",
-            message: "reCAPTCHA verification failed. Please try again."
+            message: "reCAPTCHA verification failed. Please try again.",
           });
-        }
+        },
       });
 
       isLoading = true;
-      result = await fetchDistance(sourceAddress, destinationAddress, captchaToken);
+      result = await fetchDistance(
+        sourceAddress,
+        destinationAddress,
+        captchaToken
+      );
       toast.set({
         type: "success",
-        message: "Distance calculated successfully!"
+        message: "Distance calculated successfully!",
       });
     } catch (error) {
-      if (error instanceof Error && error.message.includes('reCAPTCHA')) {
+      if (error instanceof Error && error.message.includes("reCAPTCHA")) {
         return;
       }
       toast.set({
         type: "error",
-        message: error instanceof Error ? error.message : "Something went wrong"
+        message:
+          error instanceof Error ? error.message : "Something went wrong",
       });
     } finally {
       isLoading = false;
@@ -94,19 +113,26 @@
             id="source"
             bind:value={sourceAddress}
             use:googlePlacesAutocomplete={{
-              onSelect: handleAddressSelect('source'),
+              onSelect: handleAddressSelect("source"),
               onError: (error) => {
                 toast.set({
                   type: "error",
-                  message: "Failed to load address suggestions. Please try typing the full address."
+                  message:
+                    "Failed to load address suggestions. Please try typing the full address.",
                 });
-              }
+              },
             }}
             class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
             focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
             transition-colors"
             placeholder="Enter source address"
+            maxlength={MAX_ADDRESS_LENGTH}
           />
+          {#if sourceAddress.length >= MAX_ADDRESS_LENGTH}
+            <p class="text-sm text-red-500">
+              Address cannot exceed {MAX_ADDRESS_LENGTH} characters
+            </p>
+          {/if}
           {#if result?.source_corrected}
             <p class="text-sm text-gray-600 italic">
               Guess you want to search: {result.source_address}
@@ -126,19 +152,26 @@
             id="destination"
             bind:value={destinationAddress}
             use:googlePlacesAutocomplete={{
-              onSelect: handleAddressSelect('destination'),
+              onSelect: handleAddressSelect("destination"),
               onError: (error) => {
                 toast.set({
                   type: "error",
-                  message: "Failed to load address suggestions. Please try typing the full address."
+                  message:
+                    "Failed to load address suggestions. Please try typing the full address.",
                 });
-              }
+              },
             }}
             class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
             focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
             transition-colors"
             placeholder="Enter destination address"
+            maxlength={MAX_ADDRESS_LENGTH}
           />
+          {#if destinationAddress.length >= MAX_ADDRESS_LENGTH}
+            <p class="text-sm text-red-500">
+              Address cannot exceed {MAX_ADDRESS_LENGTH} characters
+            </p>
+          {/if}
           {#if result?.destination_corrected}
             <p class="text-sm text-gray-600 italic">
               Guess you want to search: {result.destination_address}
@@ -186,12 +219,16 @@
             Distance
           </div>
           {#if result}
-            <p class="text-lg truncate">
-              {selectedUnit === "Miles"
-                ? `${result.miles.toFixed(2)} miles`
-                : selectedUnit === "Kilometers"
-                  ? `${result.kilometers.toFixed(2)} kilometers`
-                  : `${result.miles.toFixed(2)} mi / ${result.kilometers.toFixed(2)} km`}
+            <p class="text-lg">
+              {#if selectedUnit === "Both"}
+                <span>{result.miles.toFixed(2)} mi</span>
+                <!-- add more space here -->
+                <span class="mx-4">{result.kilometers.toFixed(2)} km</span>
+              {:else if selectedUnit === "Miles"}
+                {result.miles.toFixed(2)} mi
+              {:else}
+                {result.kilometers.toFixed(2)} km
+              {/if}
             </p>
           {/if}
         </div>
