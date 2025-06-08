@@ -4,9 +4,9 @@ version: '3.8'
 services:
   frontend:
     build:
-    context: .
-    args:
-      - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
+      context: .
+      args:
+        - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
     ports:
       - "5173:80"
     env_file:
