@@ -1,30 +1,32 @@
 # ---------------------
-#  Build stage
+# 1) Build stage
 # ---------------------
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-ARG PUBLIC_API_BASE_URL
-ENV PUBLIC_API_BASE_URL=$PUBLIC_API_BASE_URL
+# 让 Vite 自动加载 env 文件
+COPY .env.production .env.production
+# 如果你在本地也需要 .env 开发变量，可同时拷进来
+COPY .env .env
 
 COPY package*.json ./
 RUN npm install
 
 COPY . .
+# 强制使用 production 模式，让 Vite 读取 .env.production
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
-# 用 adapter-node 在 /app/build-node 里输出
+# 生成 SSR 输出到 /app/build-node
 RUN npm run build
 
 # ---------------------
-#  Runtime stage
+# 2) Runtime stage
 # ---------------------
 FROM node:20-alpine
 WORKDIR /app
 
-# 把 builder 阶段 /app/build-node/ 目录下所有文件拷到当前 /app
 COPY --from=builder /app/build-node/ ./
 
 EXPOSE 3000
-
 CMD ["node", "index.js"]
-    
