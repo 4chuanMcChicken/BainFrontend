@@ -1,6 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const { publicEnvVars } = require('../env.config.js');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { publicEnvVars } from '../env.config.js';
+
+// ES modules中获取__dirname的方法
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 创建环境变量内容
 const envContent = publicEnvVars
