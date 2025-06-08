@@ -1,13 +1,13 @@
 import { toast } from "$lib/stores/toast";
 import { browser } from "$app/environment";
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
+
 interface ApiError {
   detail: {
     code: string;
     message: string;
   };
 }
-
 
 const API_BASE_URL = PUBLIC_API_BASE_URL;
 
@@ -16,7 +16,7 @@ async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${PUBLIC_API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",

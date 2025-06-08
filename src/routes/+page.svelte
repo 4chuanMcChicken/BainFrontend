@@ -5,10 +5,11 @@
   import { fetchDistance } from "$lib/api/client";
   import { toast } from "$lib/stores/toast";
   import PageTitle from "$lib/components/PageTitle.svelte";
-  import { googlePlacesAutocomplete } from "$lib/actions/googlePlacesAutocomplete";
-  import { showRecaptcha } from "$lib/actions/recaptcha";
+  import { googlePlacesAutocomplete } from '$lib/actions/googlePlacesAutocomplete';
+  import { showRecaptcha } from '$lib/actions/recaptcha';
+  import { PUBLIC_RECAPTCHA_SITE_KEY } from '$env/static/public';
 
-  const MAX_ADDRESS_LENGTH = 50;
+  const MAX_ADDRESS_LENGTH = 100;
 
   let sourceAddress = "";
   let destinationAddress = "";
@@ -56,7 +57,7 @@
 
     try {
       captchaToken = await showRecaptcha({
-        siteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+        siteKey: PUBLIC_RECAPTCHA_SITE_KEY,
         onError: (error) => {
           toast.set({
             type: "error",

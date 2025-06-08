@@ -1,4 +1,4 @@
-# Distance Calculator with Google Places Autocomplete
+# Distance Calculator Frontend
 
 This application calculates the distance between two addresses using Google Maps API for address autocomplete and distance calculation.
 
@@ -16,7 +16,9 @@ yarn
    - Create a `.env` file in the root directory
    - Add your Google Maps API key:
    ```
-   VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
+   PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
+   PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
+   PUBLIC_API_BASE_URL=your_api_base_url_here
    ```
    - Make sure to add `.env` to your `.gitignore` file
 
@@ -47,9 +49,19 @@ yarn dev
 
 ## Environment Variables
 
-The following environment variables are required:
+Create a `.env` file in the root directory with the following variables:
 
-- `VITE_GOOGLE_MAPS_API_KEY`: Your Google Maps API key
+```env
+PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
+PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
+PUBLIC_API_BASE_URL=your_api_base_url_here
+```
+
+## Required Environment Variables
+
+- `PUBLIC_GOOGLE_MAPS_API_KEY`: Your Google Maps API key
+- `PUBLIC_RECAPTCHA_SITE_KEY`: Your reCAPTCHA site key
+- `PUBLIC_API_BASE_URL`: The base URL for your API
 
 For production deployment, make sure to:
 1. Set up the environment variables in your hosting platform

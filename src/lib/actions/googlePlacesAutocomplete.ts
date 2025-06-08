@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import { PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public';
 
 declare global {
     interface Window {
@@ -88,7 +89,7 @@ export function googlePlacesAutocomplete(
     node: HTMLInputElement,
     options: AutocompleteOptions = {}
 ) {
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    const apiKey = PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
         console.error('Google Maps API key not found in environment variables');
         return;
