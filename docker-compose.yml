@@ -1,29 +1,28 @@
 version: '3.8'
 
-
 services:
   frontend:
     container_name: svelte_node
     build:
       context: .
       args:
-        - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
+        PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL}
+
     expose:
-      - "3000" 
+      - "3000"
+
     env_file:
       - .env
     environment:
-      VITE_API_BASE_URL:     ${VITE_API_BASE_URL}
-      VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
-      VITE_RECAPTCHA_SITE_KEY:  ${VITE_RECAPTCHA_SITE_KEY}
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
+      - VITE_RECAPTCHA_SITE_KEY=${VITE_RECAPTCHA_SITE_KEY}
+
     restart: unless-stopped
+
     networks:
       - proxy-net
 
 networks:
   proxy-net:
     external: true
-    # Add healthcheck
