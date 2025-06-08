@@ -3,6 +3,7 @@
   import PageTitle from "$lib/components/PageTitle.svelte";
   import type { HistoryRecord } from "$lib/api/client";
   import type { PageData } from "./$types";
+  import { Calculator } from "svelte-heros-v2";
 
   export let data: PageData;
   const history: HistoryRecord[] = data.history;
@@ -15,22 +16,9 @@
     </div>
     <button
       on:click={() => goto("/")}
-      class="inline-flex items-center px-4 py-2 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+      class="inline-flex items-center p-5 border rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
     >
-      Back to Calculator
-      <svg
-        class="ml-2 h-4 w-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
+      Back to Calculator <Calculator class="ml-4 h-4 w-4" />
     </button>
   </div>
 
@@ -40,34 +28,34 @@
       <p class=" text-base text-gray-600">History of the user's queries.</p>
     </div>
 
-    <div class="bg-white shadow overflow-hidden rounded-lg">
+    <div class="bg-white shadow overflow-hidden ">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-300">
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
               >
                 Source Address
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
               >
                 Destination Address
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
               >
                 Distance in Miles
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
               >
                 Distance in Kilometers
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody class="bg-gray-50 divide-y divide-gray-200">
             {#if history.length === 0}
               <tr>
                 <td colspan="4" class="px-6 py-4 text-center text-gray-500">
