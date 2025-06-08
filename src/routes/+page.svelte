@@ -96,7 +96,7 @@
     <PageTitle />
     <button
       on:click={() => goto("/history")}
-      class="inline-flex items-center px-4 py-2 border rounded-md text-sm font-medium text-white bg-black hover:bg-gray-700"
+      class="inline-flex items-center p-4 border rounded-md text-sm font-medium text-white bg-black hover:bg-gray-700"
     >
       View Historical Queries <Clock class="ml-4 h-5 w-5" />
     </button>
