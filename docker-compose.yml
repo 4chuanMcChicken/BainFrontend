@@ -3,12 +3,13 @@ version: '3.8'
 
 services:
   frontend:
+    container_name: svelte_node
     build:
       context: .
       args:
         - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
-    ports:
-      - "5173:80"
+    expose:
+      - "3000" 
     env_file:
       - .env
     environment:

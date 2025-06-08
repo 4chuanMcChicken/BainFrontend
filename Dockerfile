@@ -1,35 +1,28 @@
-# Build stage
-FROM node:20-alpine as builder
-
-# Set working directory
+# ---------------------
+#  Build stage
+# ---------------------
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-ARG PUBLIC_API_BASE_URL
-ENV PUBLIC_API_BASE_URL=$PUBLIC_API_BASE_URL
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy project files
 COPY . .
 
-# Build the app
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# ---------------------
+#  Runtime stage
+# ---------------------
+FROM node:20-alpine
+WORKDIR /app
 
-# Copy built assets from builder stage
-COPY --from=builder /app/.svelte-kit/output/client /usr/share/nginx/html
+# 只把打包产物拷进来
+COPY --from=builder /app/build-node ./
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose port 80
-EXPOSE 80
+EXPOSE 3000
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"] 
+
+CMD ["node", "index.js"]
+    
