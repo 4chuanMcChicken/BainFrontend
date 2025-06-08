@@ -19,4 +19,10 @@ services:
       - .:/app
       - /app/node_modules
     restart: unless-stopped
+    networks:
+      - proxy-net
+
+networks:
+  proxy-net:
+    external: true
     # Add healthcheck
