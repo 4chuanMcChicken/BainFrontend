@@ -6,6 +6,7 @@
   import { toast } from "$lib/stores/toast";
   import PageTitle from "$lib/components/PageTitle.svelte";
   import { googlePlacesAutocomplete } from '$lib/actions/googlePlacesAutocomplete';
+  import { showRecaptcha } from '$lib/actions/recaptcha';
 
   let sourceAddress = "";
   let destinationAddress = "";
@@ -30,19 +31,34 @@
       return;
     }
 
-    isLoading = true;
+    let captchaToken: string;
+
     try {
-      result = await fetchDistance(sourceAddress, destinationAddress);
+      captchaToken = await showRecaptcha({
+        siteKey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+        onError: (error) => {
+          toast.set({
+            type: "error",
+            message: "reCAPTCHA verification failed. Please try again.",
+          });
+        }
+      });
+
+
+      isLoading = true;
+      result = await fetchDistance(sourceAddress, destinationAddress, captchaToken);
       toast.set({
         type: "success",
         message: "Distance calculated successfully!",
       });
 
     } catch (error) {
+      if (error instanceof Error && error.message.includes('reCAPTCHA')) {
+        return;
+      }
       toast.set({
         type: "error",
-        message:
-          error instanceof Error ? error.message : "Something went wrong",
+        message: error instanceof Error ? error.message : "Something went wrong",
       });
     } finally {
       isLoading = false;

@@ -57,11 +57,12 @@ export interface HistoryRecord {
 
 export async function fetchDistance(
   source: string,
-  destination: string
+  destination: string,
+  captchaToken: string
 ): Promise<DistanceResponse> {
   return apiFetch<DistanceResponse>("/distance", {
     method: "POST",
-    body: JSON.stringify({ source, destination }),
+    body: JSON.stringify({ source, destination, captchaToken}),
   });
 }
 
