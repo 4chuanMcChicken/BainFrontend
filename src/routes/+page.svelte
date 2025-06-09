@@ -11,8 +11,13 @@
 
   const MAX_ADDRESS_LENGTH = 100;
 
+  // Input validation regex pattern
+  const ADDRESS_PATTERN = /^[a-zA-Z0-9\s,.-]+$/;
+
   let sourceAddress = "";
   let destinationAddress = "";
+  let sourceError = "";
+  let destinationError = "";
   let isLoading = false;
   let result: {
     kilometers: number;
@@ -24,27 +29,49 @@
   } | null = null;
   let selectedUnit: "Miles" | "Kilometers" | "Both" = "Miles";
 
-  const handleAddressSelect =
-    (type: "source" | "destination") => (place: any) => {
-      if (type === "source") {
-        sourceAddress = place.formatted_address.slice(0, MAX_ADDRESS_LENGTH);
-      } else {
-        destinationAddress = place.formatted_address.slice(
-          0,
-          MAX_ADDRESS_LENGTH
-        );
-      }
-    };
-
-  $: if (sourceAddress.length > MAX_ADDRESS_LENGTH) {
-    sourceAddress = sourceAddress.slice(0, MAX_ADDRESS_LENGTH);
+  // Validate address input
+  function validateAddress(address: string): string {
+    if (!address) return "";
+    if (address.length > MAX_ADDRESS_LENGTH) {
+      return `Address cannot exceed ${MAX_ADDRESS_LENGTH} characters`;
+    }
+    if (!ADDRESS_PATTERN.test(address)) {
+      return "Address contains invalid characters";
+    }
+    return "";
   }
 
-  $: if (destinationAddress.length > MAX_ADDRESS_LENGTH) {
-    destinationAddress = destinationAddress.slice(0, MAX_ADDRESS_LENGTH);
-  }
+  const handleAddressSelect = (type: "source" | "destination") => (place: any) => {
+    const sanitizedAddress = place.formatted_address
+      .slice(0, MAX_ADDRESS_LENGTH)
+      .replace(/[^a-zA-Z0-9\s,.-]/g, '');
+
+    if (type === "source") {
+      sourceAddress = sanitizedAddress;
+      sourceError = validateAddress(sourceAddress);
+    } else {
+      destinationAddress = sanitizedAddress;
+      destinationError = validateAddress(destinationAddress);
+    }
+  };
+
+  // Reactive validation
+  $: sourceError = validateAddress(sourceAddress);
+  $: destinationError = validateAddress(destinationAddress);
 
   const handleSubmit = async () => {
+    // Validate both inputs before submission
+    const sourceValidation = validateAddress(sourceAddress);
+    const destValidation = validateAddress(destinationAddress);
+
+    if (sourceValidation || destValidation) {
+      toast.set({
+        type: "error",
+        message: "Please fix the input errors before submitting"
+      });
+      return;
+    }
+
     if (!sourceAddress || !destinationAddress) {
       toast.set({
         type: "error",
@@ -125,13 +152,14 @@
             }}
             class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
             focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
-            transition-colors"
+            transition-colors {sourceError ? 'border-red-500' : ''}"
             placeholder="Enter source address"
             maxlength={MAX_ADDRESS_LENGTH}
+            pattern={ADDRESS_PATTERN.source}
           />
-          {#if sourceAddress.length >= MAX_ADDRESS_LENGTH}
+          {#if sourceError}
             <p class="text-sm text-red-500">
-              Address cannot exceed {MAX_ADDRESS_LENGTH} characters
+              {sourceError}
             </p>
           {/if}
           {#if result?.source_corrected}
@@ -164,13 +192,14 @@
             }}
             class="w-full p-2 border-0 border-b border-gray-300 bg-transparent
             focus:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-transparent
-            transition-colors"
+            transition-colors {destinationError ? 'border-red-500' : ''}"
             placeholder="Enter destination address"
             maxlength={MAX_ADDRESS_LENGTH}
+            pattern={ADDRESS_PATTERN.source}
           />
-          {#if destinationAddress.length >= MAX_ADDRESS_LENGTH}
+          {#if destinationError}
             <p class="text-sm text-red-500">
-              Address cannot exceed {MAX_ADDRESS_LENGTH} characters
+              {destinationError}
             </p>
           {/if}
           {#if result?.destination_corrected}

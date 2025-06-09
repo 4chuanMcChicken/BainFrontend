@@ -10,7 +10,7 @@
 </script>
 
 <div class="mx-auto">
-  <div class="flex justify-between items-start mb-8">
+  <div class="flex justify-between items-start mb-4">
     <div>
       <PageTitle />
     </div>
