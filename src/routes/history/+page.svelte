@@ -9,7 +9,7 @@
   const history: HistoryRecord[] = data.history;
 </script>
 
-<div class="mx-auto p-4">
+<div class="mx-auto">
   <div class="flex justify-between items-start mb-8">
     <div>
       <PageTitle />
